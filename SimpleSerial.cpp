@@ -1,36 +1,39 @@
 #include "SimpleSerial.h"
 
 /*Initializes HardwareSerial
- *and transmits the "READY" byte to sychronize*/
+ *and transmits the "READY" byte to sychronize.
+ *TODO: this should be done properly some other way
+ */
 void Channel::init(int baudrate){
     Serial.begin(baudrate);
 
     while (Serial.read()!=READY) ;
-    
+
     Serial.write(READY);
-    
+
     while (Serial.read()!=READY) ;
-    
+
     Serial.write(READY);
-
-
 
 }
 
-/*Waits for at least one byte to be available, then runs an event*/
+/*Waits for at least one byte to be available,
+ then runs an event*/
 void Channel::await(){
-    while (Serial.available()==0) {}
+    while (!Serial.available()) {}
     event();
 }
 
 /*runs an event if there are bytes available*/
 void Channel::check(){
-    if (Serial.available()>0) event();
+    if (Serial.available()) event();
 }
 
-/*reads first byte of data then passes execution on to specific
- *methods*/
+/*reads first byte of data then passes execution on to
+ *specific methods
+ */
 void Channel::event(){
+
     char type=buffer(1)[0]; //first byte is type ID
 
     switch (type){
@@ -51,7 +54,6 @@ void Channel::event(){
                     handles[i](data,size);
                     break;
                 }
-                    
             }
     }
 }
@@ -76,13 +78,15 @@ void Channel::handleString(){
  *them out in to an array*/
 char* Channel::buffer(char size){
     while (Serial.available()<size){}
-    
+
     char buffer[size];
     Serial.readBytes(buffer, size);
     return buffer;
 }
 
-/*sends a fixed amount of bytes preceeded by the type ID to interprete them*/
+/*sends a fixed amount of bytes preceeded
+ *by the type ID to interpret them
+ */
 void Channel::tx(char type, char data[], char size) {
     Serial.write(type);
     if(type!=FLOAT && type!=INT && type!=STRING)
@@ -125,14 +129,3 @@ void Channel::setCallback(void(*f)(float)){
 void Channel::setCallback(void(*f)(String)){
     stringCallback=f;
 }
-
-
-
-
-
-
-
-
-
-
-
