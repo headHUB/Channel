@@ -2,6 +2,7 @@
 #define CHANNEL_H
 
 #include "HardwareSerial.h"
+#define ESTABLISH '~'
 
 template <typename P> class Channel {
 public:
