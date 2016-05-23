@@ -1,4 +1,3 @@
-
 #ifndef CHANNEL_CPP
 #define CHANNEL_CPP
 
@@ -16,10 +15,26 @@ template <typename P>
 void Channel<P>::check(){
   if (Serial->peek()==id){
     Serial->read(); //discard id byte
-    P p;
-    Serial->readBytes((char*)&p, sizeof(P));
-    callback(p);
+		P p;
+		Serial->readBytes((char*)&p, sizeof(P));
+		callback(p);
   }
+}
+
+template <typename P>
+void Channel<P>::wait(){
+  while (Serial->read()!=id) ;
+	P p;
+	Serial->readBytes((char*)&p, sizeof(P));
+	callback(p);
+}
+
+template <typename P>
+P Channel<P>::next(){
+  while (Serial->read()!=id) ;
+	P p;
+	Serial->readBytes((char*)&p, sizeof(P));
+	return p;
 }
 
 template <typename P>
