@@ -25,6 +25,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+// Sebastian Giles added: _readbytes, _peek, _readbytes, _writebytes
+
+
+
 #ifndef __ARDUINO_SERIAL_LIB_H__
 #define __ARDUINO_SERIAL_LIB_H__
 
@@ -36,5 +40,11 @@ int serialport_writebyte( int fd, uint8_t b);
 int serialport_write(int fd, const char* str);
 int serialport_read_until(int fd, char* buf, char until, int buf_max,int timeout);
 int serialport_flush(int fd);
+
+int serialport_readbytes(int fd, char* buf, int len);
+int serialport_readbyte(int fd);
+int serialport_peek(int fd);
+int serialport_writebytes(int fd, const char* str, int len);
+
 
 #endif

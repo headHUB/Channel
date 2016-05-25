@@ -24,6 +24,14 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+// arduino-serial-lib -- simple library for reading/writing serial ports
+
+//Modifications by Sebastian Giles (Sebgiles) marked throughout the code:
+// + added a function to peek a single char
+// + added a function to read a single char
+// + added a function to read a requested number of bytes with no timeout
+// + added a function to send a plain char array with given length
+
 
 #include "arduino-serial-lib.h"
 
@@ -168,4 +176,58 @@ int serialport_flush(int fd)
 {
     sleep(2); //required to make flush work, for some reason
     return tcflush(fd, TCIOFLUSH);
+}
+
+//Addition by Sebastian Giles ==================================================
+int serialport_peek(int fd)
+{
+  static int n= -1;
+  if (n!=-1) return n;
+  char b[1];  // read expects an array, so we give it a 1-byte array
+
+  n = read(fd, b, 1);  // read a char
+  if( n!=1 ) return (n=-1); // (nothing to / couldn't)read
+  return (n=b[0]);
+}
+
+//Addition by Sebastian Giles
+int serialport_readbyte(int fd)
+{
+  char b[1];  // read expects an array, so we give it a 1-byte array
+  int n = read(fd, b, 1);  // read a char
+  if( n!=1 ) return -1;    // (nothing to / couldn't)read
+  return b[0];
+}
+
+//Addition by Sebastian Giles
+int serialport_readbytes(int fd, char* buf, int len)
+{
+    char b[1];  // read expects an array, so we give it a 1-byte array
+    int i=0;
+    do {
+        int n = read(fd, b, 1);  // read a char at a time
+        if( n==-1) return -1;    // couldn't read
+        if( n==0 ) {
+            usleep( 1 * 1000 );  // wait 1 msec try again
+            continue;
+        }
+#ifdef SERIALPORTDEBUG
+        printf("serialport_read_patient: i=%d, n=%d b='%c'\n",i,n,b[0]); // debug
+#endif
+        buf[i] = b[0];
+        i++;
+    } while(i < len);
+
+    return 0;
+}
+
+//Addition by Sebgiles
+int serialport_writebytes(int fd, const char* str, int len)
+{
+    int n = write(fd, str, len);
+    if( n!=len ) {
+        perror("serialport_write: couldn't write whole array\n");
+        return -1;
+    }
+    return 0;
 }
