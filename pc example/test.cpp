@@ -1,5 +1,5 @@
-#include "../Channel.h"
 #include "../HardwareSerial.h"
+#include "../Channel.h"
 #include <iostream>
 
 using namespace std;
