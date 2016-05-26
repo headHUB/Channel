@@ -11,25 +11,25 @@ struct Ratio {
 } r;
 
 Channel<Ratio> rch;
-//Channel<float> fch;
+Channel<float> fch;
 
-void print(Ratio& r){
-  cout << ((float)r.num/r.den) << endl;
+void print(float& f){
+  cout << f << endl;
 }
 
 void setup() {
-  rch.init(Serial, 115200, 'R', print);
-  //fch.init(Serial, 115200, 'F');
+  rch.init(Serial, 115200, 'R');
+  fch.init(Serial, 115200, 'F', print);
 
 }
 
 void loop() {
-	cout << "Inserisci numeratore: ";
+	cout << "Inserisci numerator: ";
 	cin >> r.num;
-	cout << "Inserisci denominatore: ";
+	cout << "Inserisci denominator: ";
 	cin >> r.den;
-	rch.send(den);
-  rch.wait();
+	rch.send(r);
+  fch.wait();
 }
 
 int main(){
