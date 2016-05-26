@@ -3,34 +3,11 @@
 //
 // 2006-2013, Tod E. Kurt, http://todbot.com/blog/
 //
-//The MIT License (MIT)
-//
-// Copyright (c) 2014 Tod E. Kurt
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-// arduino-serial-lib -- simple library for reading/writing serial ports
 
 //Modifications by Sebastian Giles (Sebgiles) marked throughout the code:
-// + added a function to peek a single char
 // + added a function to read a single char
 // + added a function to read a requested number of bytes with no timeout
-// + added a function to send a plain char array with given length
+// + added a function to send a plain char* with given length
 
 
 #include "arduino-serial-lib.h"
@@ -134,16 +111,48 @@ int serialport_writebyte( int fd, uint8_t b)
     return 0;
 }
 
-//Addition by Sebastian Giles ==================================================
-int serialport_peek(int fd)
+//
+int serialport_write(int fd, const char* str)
 {
-  static int n= -1;
-  if (n!=-1) return n;
-  char b[1];  // read expects an array, so we give it a 1-byte array
+    int len = strlen(str);
+    int n = write(fd, str, len);
+    if( n!=len ) {
+        perror("serialport_write: couldn't write whole string \n");
+        return -1;
+    }
+    return 0;
+}
 
-  n = read(fd, b, 1);  // read a char
-  if( n!=1 ) return (n=-1); // (nothing to / couldn't)read
-  return (n=b[0]);
+//
+int serialport_read_until(int fd, char* buf, char until, int buf_max, int timeout)
+{
+    char b[1];  // read expects an array, so we give it a 1-byte array
+    int i=0;
+    do {
+        int n = read(fd, b, 1);  // read a char at a time
+        if( n==-1) return -1;    // couldn't read
+        if( n==0 ) {
+            usleep( 1 * 1000 );  // wait 1 msec try again
+            timeout--;
+            if( timeout==0 ) return -2;
+            continue;
+        }
+#ifdef SERIALPORTDEBUG
+        printf("serialport_read_until: i=%d, n=%d b='%c'\n",i,n,b[0]); // debug
+#endif
+        buf[i] = b[0];
+        i++;
+    } while( b[0] != until && i < buf_max && timeout>0 );
+
+    buf[i] = 0;  // null terminate the string
+    return 0;
+}
+
+//
+int serialport_flush(int fd)
+{
+    sleep(2); //required to make flush work, for some reason
+    return tcflush(fd, TCIOFLUSH);
 }
 
 //Addition by Sebastian Giles
