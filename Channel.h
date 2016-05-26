@@ -28,9 +28,7 @@ void Channel<P>::init(HardwareSerial& s, long baud, char ID, void(*cb)(P&)){
   Serial=&s;
   callback=cb;
   Serial->begin(baud);
-  do {
-    Serial->write(ESTABLISH);
-  } while (Serial->read()!=ESTABLISH);
+  delay(100);
 }
 
 template <typename P>
