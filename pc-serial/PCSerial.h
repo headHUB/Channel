@@ -1,7 +1,7 @@
-#ifndef HardwareSerial_h
-#define HardwareSerial_h
+#ifndef PCSerial_h
+#define PCSerial_h
 extern "C"{
-  #include "posix/arduino-serial-lib.h"
+  #include "arduino-serial-lib.h"
 }
 
 #include <unistd.h> //for delay
@@ -80,4 +80,4 @@ void HardwareSerial::flush(){
   serialport_flush(fd);
 }
 
-#endif //HardwareSerial.h
+#endif //PCSerial.h

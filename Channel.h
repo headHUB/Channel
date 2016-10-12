@@ -1,9 +1,9 @@
 #ifndef CHANNEL_H
 #define CHANNEL_H
 #if defined(ARDUINO)
-#include <Arduino.h>
+#include <HardwareSerial.h>
 #else
-#include "HardwareSerial.h"
+#include "pc-serial/PCSerial.h"
 #endif
 
 #define ESTABLISH '~'
