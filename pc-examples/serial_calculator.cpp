@@ -9,7 +9,7 @@ struct Ratio {
   int32_t num, den;
 };
 
-HardwareSerial Serial("/dev/cu.usbmodem14111");
+HardwareSerial Serial("/dev/cu.usbmodem14131");
 
 Channel<Ratio> rch;
 Channel<float> fch;

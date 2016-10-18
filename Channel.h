@@ -2,11 +2,10 @@
 #define CHANNEL_H
 #if defined(ARDUINO)
 #include <HardwareSerial.h>
+#include "Arduino.h"
 #else
 #include "pc-serial/PCSerial.h"
 #endif
-
-#define ESTABLISH '~'
 
 template <typename P> class Channel {
 public:
@@ -43,7 +42,7 @@ void Channel<P>::check(){
 
 template <typename P>
 void Channel<P>::wait(){
-  while (Serial->read()!=id) ;
+  while (Serial->read()!=id) ; //potentially buggy
 	P p;
 	Serial->readBytes((char*)&p, sizeof(P));
 	callback(p);
