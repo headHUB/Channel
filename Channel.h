@@ -50,7 +50,7 @@ void Channel<P>::wait(){
 
 template <typename P>
 P Channel<P>::next(){
-  while (Serial->read()!=id) ;
+  while (Serial->read()!=id) ;//potentially buggy
 	P p;
 	Serial->readBytes((char*)&p, sizeof(P));
 	return p;
