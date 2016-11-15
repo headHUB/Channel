@@ -16,7 +16,8 @@ computer:
 1. Clone or download as zip and unpack to your Arduino IDE libraries folder.
 
 2. In order to let your microcontroller communicate with your
-computer, compile my modified version of [Tod E. Kurt](http://todbot.com/blog)'s arduino-serial-lib:
+computer, compile my modified version of [Tod E. Kurt](http://todbot.com/blog)'s
+ arduino-serial-lib:
 from a terminal, within the pc-serial directory enter
 ```
 gcc -o arduino-serial-lib.o -c arduino-serial-lib.c
