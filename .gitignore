@@ -2,3 +2,9 @@
 *.un~
 
 *.swp
+
+*.o
+
+*.pyc
+
+pc-examples/serial_calculator
