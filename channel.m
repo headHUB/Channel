@@ -23,7 +23,7 @@ classdef IPSerial
 
 		end
 
-		function r = read(obj)
+		function r = read(obj, type)
 
 		end
 
@@ -37,7 +37,28 @@ end
 
 classdef Channel
 properties
+	type
+	ser
 end
 methods
+	function obj = Channel(IPSerial, type)
+		obj.ser = IPSerial
+		obj.type = type
+	end
+
+	function r = parse(obj, raw)
+		return
+	end
+
+	function send(obj, packet)
+
+	end
+
+	function r = next(obj)
+
+	end
+
+
+
 end
 end
